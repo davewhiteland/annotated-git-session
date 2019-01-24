@@ -1,0 +1,1114 @@
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>annotated git session</title>
+  <style>
+    body {
+      background-color:black;
+      margin:0;
+      padding:0;
+      font-family: monospace;
+      font-size:120%;
+      line-height: 1.4;
+    }
+    .p, .r, pre {
+      clear:both;
+    }
+    .p {
+      margin: 0.5em 0 0 0;
+      color: white;
+      padding: 0em 1em;
+    }
+    .r, pre {
+      margin: 0;
+      color: #aaa;
+      padding: 0em 1em 0.5em 1em;
+    }
+    .session p {
+      background: #eea;
+      border:1px solid #999;
+      color: #000;
+      margin: 0.5em 1em 0.5em 3em;
+      padding: 0.5em 1em;
+      font-family: serif;
+      float:left;
+      clear:both;
+      border-radius: 0.75em;
+    }
+    p code {
+      background: #dd6;
+      padding:0.1em;
+    }
+    p.above {
+      margin-left: 5em;
+    }
+    p.above::before {
+      content: "↑";
+      color: #999;
+      font-family: bold;
+      font-size: 150%;
+      padding-right:0.5em;
+    }
+    p.alert {
+      background-color: #fcc;
+    }
+    .intro, .footer {
+      font-family: serif;
+      background:#fff;
+      padding: 1em;
+      margin-bottom:2em;
+    }
+    .footer {
+      clear:both;
+      margin: 6em 1em 1em 1em;
+      text-align: center;
+    }
+    .red       { color: #f00; }
+    .green     { color: #0f0; }
+    .dark-blue { color: #66f; }
+    .yellow    { color: #ff0; }
+  </style>
+</head>
+<body>
+  <div class="intro">
+    <h1>An annotated Git session</h1>
+    <p>
+      Before you start:
+    </p>
+    <ul>
+      <li><p>You must have Git installed:
+        <a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">how to install Git</a>.</p></li>
+      <li>
+        <p>It’s best if you set up your global credentials in Git — if you
+        don’t, Git will ask you for them when they are necessary, but it’s
+        smart to sort that out right at the beginning (that’s how the user
+        "Anne Example" is appearing the session below). The <code>--global</code>
+        option means this is for <em>all</em> the repositories you create, so
+        you only need to do this once (that is, consider it part of your
+        installation of Git):
+      </p>
+        <p>
+          <code>git config --global user.name "Anne Example"</code>
+          <br>
+          <code>git config --global user.email "anne@example.com"</code>
+        </p>
+      </li>
+      <li>
+        <p>(optional, recommended) In the session below, the command <code>git&nbsp;lg</code>
+        is being used to show a concise "pretty" version of the log. There is
+        no such command: it’s an alias to <code>git&nbsp;log</code> with a hairy
+        format parameter. If you want this to work on your machine, you need to
+        set it up with the following command (one single line):
+      </p>
+      <p>
+        <code>
+          git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)&lt;%an&gt;%Creset' --abbrev-commit --date=relative"
+        </code>
+      </p>
+      </li>
+    </ul>
+    <p>
+      This session happens to be running on a Mac (in the terminal, of course)
+      but it’s more or less identical to how it would be on any Linux box.
+      The "git shell" on Windows is pretty much the same too.
+    </p>
+    <p>
+      Of course there are GUIs, but for getting to grips with the basics of git,
+      step-by-step command line is the way to go...
+    </p>
+  </div>
+<div class="session">
+<p>OK... make a directory called <code>foo</code></p>
+<div class="p">&gt; mkdir foo</div>
+<p>...jump into it...</p>
+<div class="p">&gt; cd foo</div>
+<p>...and list the files:</p>
+<div class="p">&gt; ls</div>
+<p class="above">...and there are none (it’s an empty directory, of course)</p>
+<p>
+  In the rest of this example, <code>edit</code> is aliased to an editor which could be anything (even
+  Notepad++). Whatever.
+  The point is you’re editing (and in this case creating) a file called
+  <code>hello.html</code> and putting some HTML into it. You can’t see
+  the edit session here so look ahead to <code>cat&nbsp;hello.html</code> which
+  shows the contents of the file...
+</p>
+<div class="p">&gt; edit hello.html</div>
+<div class="p">&gt; cat hello.html</div>
+<pre>
+&lt;html&gt;
+ &lt;body&gt;
+  &lt;h1&gt;Hello World!&lt;/h1&gt;
+  &lt;p&gt;Don't panic.&lt;/p&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p class="above">That’s what you’ve put into the file with the editor.</p>
+
+<p>
+  It’s important to be <em>inside</em> the directory when you start issuing
+  Git commands (it’s how Git knows what repository you’re working with).
+  So check that you really are in <code>foo</code> with <code>pwd</code>
+  (“print working directory”):
+</p>
+<div class="p">&gt; pwd</div>
+<div class="r">/path/to/your/files/foo</div>
+<p class="above">Yup, you’re in <code>foo</code>.</p>
+
+<p>List the files...</p>
+<div class="p">&gt; ls</div>
+<div class="r">hello.html</div>
+<p class="above">As expected, there’s just one: the HTML file you’ve just created.</p>
+
+<p>Right, that’s the set up... now let’s start using Git...</p>
+<div class="p">&gt; git status</div>
+<div class="r">fatal: not a git repository (or any of the parent directories): .git</div>
+<p class="above">That’s Git telling you it can’t help you because this directory isn’t inside a Git repo.</p>
+
+<p>...so make a new repo in <code>foo</code> (the current directory) using <code>git&nbsp;init</code>:</p>
+<div class="p">&gt; git init</div>
+<div class="r">Initialized empty Git repository in /path/to/your/files/foo/.git/</div>
+<p class="above">yay!</p>
+
+<p>Now ask Git (again) what the status of the repo is, and this time you expect a better response...</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+
+No commits yet
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+	<span class="red">hello.html</span>
+
+nothing added to commit but untracked files present (use "git add" to track)
+</pre>
+<p class="above">so that’s different from the <code>fatal</code> error before!<br>
+  Now you’ve got a repo.
+  <br>
+  You’re on the branch called <code>master</code> (that’s the default).
+  <br>
+  But it’s warning you: nothing has been
+  committed (so there is no history yet; it’s an empty repo), and also that
+  there’s a file here that Git doesn’t know about.
+  <br>
+  Fix that by <em>adding</em> <code>hello.html</code> to the stage, which means you
+  want Git to notice the changes (in this case: it’s a whole new file)
+  you want to be preserved in version control.</p>
+
+<div class="p">&gt; git add hello.html</div>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached &lt;file&gt;..." to unstage)
+
+	<span class="green">new file:   hello.html</span>
+</pre>
+<p class="above">See how the file is now shown as a change “to be committed”?</p>
+
+<p>Every commit takes a snapshot of the changes on the stage, but you <em>must</em>
+    provide a <em>commit message</em>. There is a skill to writing good commit messages
+    and in professional environments it’s common for projects to impose conventions
+    on what you should write. The first line of the commit message is especially
+    important: for now, keep it short and use the message to say what the changes
+    are <em>doing</em>, not what they <em>are</em> (because that should be obvious
+    looking at the code). You can use the <code>-m</code> tag to add the message on
+    the command line. If you don’t, an editor will pop up and Git will wait for you
+    to enter the message in that (that’s how you get long messages in).
+</p>
+<div class="p">&gt; git commit -m "first commit" </div>
+<pre>
+[master (root-commit) 1bddec2] first commit
+ 1 file changed, 7 insertions(+)
+ create mode 100644 hello.html
+</pre>
+
+<p>Do a <code>status</code> straight after to see what’s happened:</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+<p class="above">you’re still on the branch called <code>master</code>, but now
+  there are no changes. That’s because there have been no changes <em>since your
+  last commit</em> (that is, right now <code>hello.html</code> is no different from the
+  version in the most recent snapshot). Git is version control and if the 
+  working tree is clean, that means everything is up to date.
+</p>
+
+<p class="alert">You’ve just been told the webpage is going
+  to deployed on Mars, so you need to change the greeting it displays...
+</p>
+<div class="p">&gt; edit hello.html </div>
+<p>...after editing, check the status:</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+	<span class="red">modified:   hello.html</span>
+
+no changes added to commit (use "git add" and/or "git commit -a")
+</pre>
+<p class="above">See how this is different from before?
+  <br>
+  Git is tracking the
+  file (because you’ve added it) so when it changes it reports it
+  as having changed.
+</p>
+<p>Use <code>git diff</code> to ask to see <em>what</em> those changes are:</p>
+<div class="p">&gt; git diff</div>
+<pre>
+diff --git a/hello.html b/hello.html
+index 2155857..83970b5 100644
+--- a/hello.html
++++ b/hello.html
+<span class="cyan">@@ -1,6 +1,6 @@</span>
+ &lt;html&gt;
+  &lt;body&gt;
+<span class="red">-  &lt;h1&gt;Hello World!&lt;/h1&gt;</span>
+<span class="green">+  &lt;h1&gt;Hello Mars!&lt;/h1&gt;</span>
+   &lt;p&gt;Don't panic.&lt;/p&gt;
+  &lt;/body&gt;
+ &lt;/html&gt;
+</pre>
+<p class="above">Git shows you the differences, as well as a couple of lines of context either side.</p>
+
+<p>It looks good, so add those changes to the stage, and then commit them, using <code>-m</code> to add the commit message.</p>
+<div class="p">&gt; git add hello.html </div>
+
+<div class="p">&gt; git commit -m "change world because we’re not running on Earth"</div>
+<pre>
+[master 07e1c1c] change world because we’re not running on Earth
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+</pre>
+<p>As usual, check status to see what’s happened:</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+<p class="above">Everything is clean because, once again, the file is now no different from the one
+  in the latest commit.</p>
+
+<p>That’s all well and good, but <code>git&nbsp;status</code> doesn’t tell you about the history of the repo.
+  For that, use <code>git log</code></p>
+<div class="p">&gt; git log</div>
+<pre>
+<span class="yellow">commit 07e1c1c4aaabed40d59194c2bf8a332df149fba2</span> (<span class="cyan">HEAD -&gt;</span> <span class="green">master</span>)
+Author: Anne Example &lt;anne@example.com&gt;
+Date:   Wed Jan 23 14:17:20 2019 +0000
+
+    change world because we're not running on Earth
+
+<span class="yellow">commit 1bddec2df3032987fe6f06d888e18de9dcb9dab2</span>
+Author: Anne Example &lt;anne@example.com&gt;
+Date:   Wed Jan 23 14:15:49 2019 +0000
+
+    first commit
+</pre>
+<p><code>git log</code> is a bit clunky. It’s often handy to be able to see a
+  more concise version of the history, and Git lets you configure your own 
+  layout, and even alias it with a custom command. Here, <code>git&nbsp;lg</code>
+  shows a cleaner version: this won’t work until you’ve declared the <code>lg</code>
+  alias, but it’s used here to make it easier for you to see the history in
+  the rest of this session.
+</p>
+<div class="p">&gt; git lg</div>
+<pre>
+* <span class="red">07e1c1c</span> - <span class="yellow">(HEAD -&gt; master)</span> change world because we're not running on Earth <span class="green">(27 seconds ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">1bddec2</span> - first commit <span class="green">(2 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+</pre>
+
+<p class="alert">
+  Right — you’ve just been told by the sysadmin who’s running the webserver
+  your file is going to be deployed on that it <em>must</em> be called 
+  <code>index</code>. So you need to rename the file. There’s more than 
+  one way to do this but <code>git&nbsp;mv</code> is the simplest:
+</p>
+<div class="p">&gt; git mv hello.html index.html</div>
+
+<p>Hmm, what happened? Use <code>ls</code> to see what’s in the directory now:</p>
+<div class="p">&gt; ls</div>
+<div class="r">&gt; index.html</div>
+<p class="above">yup, we moved the file and it’s now called <code>index.html</code></p>
+
+<p>What does Git think is going on?</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+	<span class="green">renamed:    hello.html -&gt; index.html</span>
+
+</pre>
+<p class="above">...because we used <code>gt&nbsp;mv</code> to rename it, Git not only knows
+  about the rename, but has <em>also added it to the stage</em>. So that’s ready to commit...</p>
+
+<p>This commit uses the <code>-m</code> option twice, to add two messages...
+  <br>It’s probably
+  better to use the editor that will pop up if you don’t specify any at all, though.</p>
+<div class="p">&gt; git commit -m "rename file to be webserver’s default (index)" -m "This matches requirements of the customer’s URL scheme."</div>
+<pre>
+[master 2c2ddfc] rename file to be webserver's default (index)
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename hello.html =&gt; index.html (100%)
+</pre>
+
+<p>Now look at the history:</p>
+<div class="p">&gt; git lg</div>
+<pre>
+* <span class="red">2c2ddfc</span> - <span class="yellow">(HEAD -&gt; master)</span> rename file to be webserver's default (index) <span class="green">(17 seconds ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">07e1c1c</span> - change world because we're not running on Earth <span class="green">(2 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">1bddec2</span> - first commit <span class="green">(4 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+</pre>
+<p class="above">That’s the whole history of the commits throughout the project. Notice how every commit has a unique hash (shown here in red).</p>
+
+<p>Quick reminder of what’s in the HTML file at the moment:</p>
+<div class="p">&gt; cat index.html </div>
+<pre>
+&lt;html&gt;
+ &lt;body&gt;
+  &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+  &lt;p&gt;Don't panic.&lt;/p&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>OK here we go: we can roll back to any commit simply by name.
+  <br>
+  BE CAREFUL this is the start of where you can get into a pickle because
+  a tiny part of you is <em>going back in time</em> now...
+  <br>
+  The name of the commit (<code>07e1c1c</code>) comes from looking at the history,
+  shown above.
+</p>
+<div class="p">&gt; git checkout 07e1c1c</div>
+<pre>
+Note: checking out '07e1c1c'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b &lt;new-branch-name&gt;
+
+HEAD is now at 07e1c1c change world because we're not running on Earth
+</pre>
+<p class="above">Git is really trying to warn you that you’re in a strange place.
+  <br>
+  HEAD is the normally the top-of-the-branch, and you’ve always been at the HEAD
+  because Git bumps it along as you make your commits. But here you’ve deliberately
+  gone back down the branch: you’re no longer at the top.
+
+<p>Have a look to see what’s in the directory now...</p>
+<div class="p">&gt; ls</div>
+<div class="r">hello.html</div>
+<p class="above">hmm... <code>index.html</code> has disappeared, and you’ve got <code>hello.html</code> back</p>
+<p>
+  Take a breath.
+  <br>Here’s a very important point: the version of the file from the future 
+  we’ve come back from (where it’s called <code>index.html</code>)
+  <em>is still in the repo</em>: you haven’t lost it, but the working directory is now
+  back in a state we were in earlier in the session. Git updates the files in the working
+  directory (that is, the files you can see and interact with) according to which commit 
+  you checkout.
+</p>
+<p>A quick look inside the HTML file:</p>
+<div class="p">&gt; cat hello.html </div>
+<pre>
+&lt;html&gt;
+ &lt;body&gt;
+  &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+  &lt;p&gt;Don't panic.&lt;/p&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<div class="p">&gt; git status</div>
+<pre>
+<span class="red">HEAD detached at</span> 07e1c1c
+nothing to commit, working tree clean
+</pre>
+<p class="above">Git knows we’re working with a detached HEAD, and that there are no differences between
+  the files in the working directory and those in version control for the <code>07e1c1c</code> snapshot
+  (because we haven’t changed any files since we came "back" here).
+</p>
+
+<p>If you do <code>git&nbsp;branch</code> now, Git shows you’re not currently on any branch:</p>
+<div class="p">&gt; git branch</div>
+<pre>
+* <span class="green">(HEAD detached at 07e1c1c)</span>
+  master
+</pre>
+
+<p>You can add an <em>annoted tag</em>. This is like adding a name, and a message, to any commit:</p>
+<div class="p">&gt; git tag -a hello-mars -m "last commit before HTML file was renamed"</div>
+<p class="above">Git doesn’t report anything, but that worked.
+  <br>
+  Because you didn’t specify a commit, it’s tagged to the current one.
+  <br>
+  You’ll see the tag  turning up when you look in the history later on.
+  <br>
+  Tags are often used a named version releases.
+</p>
+
+<p>Now go back to last commit you made.
+  <br>
+  If you checkout a branch, Git will put you at
+  the top of that branch (so here, HEAD will point to the commit at the top of
+  <code>master</code>)
+</p>
+<div class="p">&gt; git checkout master</div>
+<pre>
+Previous HEAD position was 07e1c1c change world because we're not running on Earth
+Switched to branch 'master'
+</pre>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+<div class="p">&gt; ls</div>
+<div class="r">index.html</div>
+<p class="above">You’ve got <code>index.html</code> back, phew!</p>
+
+<p>But now you’ve made a tag, you can checkout using that:</p>
+<div class="p">&gt; git checkout hello-mars</div>
+<pre>
+Note: checking out 'hello-mars'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b &lt;new-branch-name&gt;
+
+HEAD is now at 07e1c1c change world because we're not running on Earth
+</pre>
+<p class="above">Once again, Git again warns you that you’re now running with a detached
+  HEAD — you’re not at the head of a branch, where you’d normally be working.</p>
+  
+<div class="p">&gt; git status</div>
+<pre>
+<span class="red">HEAD detached at</span> hello-mars
+nothing to commit, working tree clean
+</pre> 
+<p class="above">This is identical to what happened when you did <code>checkout 07e1c1c</code>,
+  because the tag is simply a name for that commit.</p>
+
+<p>OK, so now try editing the HTML. Change Mars to Pluto.</p>
+<div class="p">edit hello.html</div>
+
+<div class="p">&gt; git diff</div>
+<pre>
+diff --git a/hello.html b/hello.html
+index 83970b5..a55049e 100644
+--- a/hello.html
++++ b/hello.html
+@@ -1,6 +1,6 @@
+ &lt;html&gt;
+  &lt;body&gt;
+<span class="red">-  &lt;h1&gt;Hello Mars!&lt;/h1&gt;</span>
+<span class="green">+  &lt;h1&gt;Hello Pluto!&lt;/h1&gt;</span>
+   &lt;p&gt;Don't panic.&lt;/p&gt;
+  &lt;/body&gt;
+ &lt;/html&gt;
+</pre> 
+<div class="p">&gt; git status</div>
+<pre>
+HEAD detached at hello-mars
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+	<span class="red">modified:   hello.html</span>
+
+no changes added to commit (use "git add" and/or "git commit -a")
+</pre> 
+<p class="above">You can see you’ve changed the file, and if you did really
+  need to go to Pluto, you could start a new branch here or... but wait! Pluto
+  isn’t even a planet any more, so let’s abandon this change by simply not
+  committing it...
+</p>
+  
+<p>So try going back to the head of the <code>master branch</code></p>
+<div class="p">&gt; git checkout master</div>
+<pre>
+error: Your local changes to the following files would be overwritten by checkout:
+	hello.html
+Please commit your changes or stash them before you switch branches.
+Aborting
+</pre>
+<p class="above">That failed! Git won’t let you do this because it knows you’d
+  lose the changes (Pluto) you’ve made to the file.</p>
+  
+<p>There’s more than one way to dismiss the changes in a specific file.
+  You could use <code>checkout</code> with the <code>-f</code> "force" option.
+  But you can also checkout any specific file: this reverts it to the state of
+  the commit at the current HEAD. So you can destroy the (unstaged) changes
+  you’ve made in that file by explicity checking it out.</p>
+<div class="p">&gt; checkout hello.html</div>
+
+<div class="p">&gt; git status</div>
+<pre>
+<span class="red">HEAD detached at hello-mars</span>
+nothing to commit, working tree clean
+</pre>
+<p class="above">Your modifications have been lost, and <code>hello.html</code>
+  is back to the same state as the version at <code>hello-mars</code> (or
+  <code>07e1c1c</code>, because those are two names for the same commit).
+</p>
+
+<p>If you try to <code>checkout master</code> again, this time it will work:</p>
+<div class="p">&gt; git checkout master</div>
+<pre>
+Previous HEAD position was 07e1c1c change world because we're not running on Earth
+Switched to branch 'master'
+</pre>
+
+<p class="alert">Suddenly a new requirement comes in: you’ve just been given a photo of Mars
+  and have been told it needs to be added to the web page.
+  <br>
+  Instead of working on the <code>master</code> branch, you’re going to make
+  a new branch and work on that. Call the new branch <code>add-an-image</code>:
+</p>
+<div class="p">&gt; git checkout -b add-an-image</div>
+<div class="r">Switched to a new branch 'add-an-image'</div>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch add-an-image
+nothing to commit, working tree clean
+</pre>
+<div class="p">&gt; ls</div>
+<div class="r">index.html</div>
+<p class="above">OK, so far nothing has changed.
+  <br>
+  Your branch is identical to
+  <code>master</code> because that’s where you branched off from, and you 
+  haven’t changed anything yet.
+</p>
+
+<p>Copy the photo into your repo (remember, <code>.</code> means "this directory"):</p>
+<div class="p">&gt; cp ~/Downloads/mars.jpg .</div>
+
+<p>Add the HTML <code>&lt;img&gt;</code> tag to the HTML:</p>
+<div class="p">&gt; edit index.html </div>
+
+<p>Now have a look at the status of your repo:</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch add-an-image
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+	<span class="red">modified:   index.html</span>
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+	<span class="red">mars.jpg</span>
+
+no changes added to commit (use "git add" and/or "git commit -a")
+</pre>
+<p class="above">You’ve got two things going on — a new image file, and the
+  modified HTML — but nothing is staged yet.</p>
+
+<p>Ask Git what’s different:</p>
+<div class="p">&gt; git diff</div>
+<pre>
+diff --git a/index.html b/index.html
+index 83970b5..f29c953 100644
+--- a/index.html
++++ b/index.html
+<span class="cyan">@@ -2,6 +2,7 @@</span>
+  &lt;body&gt;
+   &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+   &lt;p&gt;Don't panic.&lt;/p&gt;
+<span class="green">+  &lt;img src="mars.jpg" alt="mars"/&gt;</span>
+  &lt;/body&gt;
+ &lt;/html&gt;
+</pre>
+<p class="above">There’s the HTML you put in with the editor.
+  <br>
+  Git didn’t even consider the image file (<code>mars.jpg</code>) because it’s not
+  a file it knows about — so next, add it.</p>
+
+<p>Add the photo to the repo: (remember, this just stages it, ready for commit).</p>
+<div class="p">&gt; git add mars.jpg</div>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch add-an-image
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+	<span class="green">new file:   mars.jpg</span>
+
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+	<span class="red">modified:   index.html</span>
+</pre>
+<p class="above">OK so now the photo is staged, but you still need to add the
+  updated HTML that references it.</p>
+
+<div class="p">&gt; git add index.html </div>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch add-an-image
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+	<span class="green">modified:   index.html</span>
+	<span class="green">new file:   mars.jpg</span>
+</pre>
+<p class="above">Now you’re cooking on gas!
+  <br>
+  This shows how you can of course have multiple files  in any single commit.
+</p>
+
+<div class="p">&gt; git commit -m "add picture of Mars to webpage"</div>
+<pre>
+[add-an-image aeec505] add picture of Mars to webpage
+ 2 files changed, 1 insertion(+)
+ create mode 100644 mars.jpg
+</pre>
+
+<p class="above">So now the photo of Mars (a JPEG file) and the
+  <code>&lt;img&gt;</code> tag (a new line in the HTML file) are in the repo.</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch add-an-image
+nothing to commit, working tree clean
+</pre>
+
+<div class="p">&gt; git branch</div>
+<pre>
+* <span class="green">add-an-image</span>
+  master
+</pre>
+
+<div class="p">&gt; ls</div>
+<div class="r">index.html	mars.jpg</div>
+<p class="above">You’re about to switch back to the <code>master</code> branch,
+  but before you do, notice that you’ve got two files in the directory now.</p>
+
+<div class="p">&gt; git checkout master</div>
+<div class="r">Switched to branch 'master'</div>
+
+<div class="p">&gt; ls</div>
+<div class="p">index.html</div>
+<p class="above">And now <code>mars.jpg</code> has vanished, because it’s not
+  in this branch.
+  <br>
+  You haven’t lost it — it’s still in the repo — but it’s not
+  in the current working directory.
+</p>
+
+<p class="alert">An urgent requirement has come in from the project: you need to add a title
+  to the HTML page!
+  <br>
+  You were going to merge the new image of Mars you’ve just added to
+  <code>master</code> branch, but that has to wait.
+</p>
+<div class="p">&gt; edit index.html </div>
+
+<div class="p">&gt; git diff</div>
+<pre>
+diff --git a/index.html b/index.html
+index 83970b5..5000d16 100644
+--- a/index.html
++++ b/index.html
+<span class="cyan">@@ -1,4 +1,7 @@</span>
+ &lt;html&gt;
+<span class="green">+ &lt;head&gt;
++  &lt;title&gt;welcome to the planet&lt;/title&gt;
++ &lt;/head&gt;</span>
+  &lt;body&gt;
+   &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+   &lt;p&gt;Don't panic.&lt;/p&gt;
+</pre>
+<p class="above">OK, that’s a change to the HTML</p>
+<div class="p">&gt; git add index.html </div>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+	<span class="red">modified:   index.html</span>
+</pre>
+<div class="p">&gt; git commit -m "add a title to the webpage"</div>
+<pre>
+[master 1436e62] add a title to the webpage
+ 1 file changed, 3 insertions(+)
+</pre>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+<p class="above">Right, so now the <code>master</code> branch has moved ahead by
+  one commit from the place you branched <code>add-an-image</code> off from.
+</p>
+<p>Now you can get back to merging the changes you made on the <code>add-an-image</code>
+  branch back into the HTML file here. Note that Git knows you’re merging
+  <em>into</em> the <code>master</code> branch because that’s the branch you’re
+  on right now.
+</p>
+<div class="p">&gt; git merge add-an-image</div>
+<pre>
+Auto-merging index.html
+Merge made by the 'recursive' strategy.
+ index.html |   1 <span class="green">+</a>
+ mars.jpg   | Bin <span class="green">0</span> -&gt; <span class="green">50187</span> bytes
+ 2 files changed, 1 insertion(+)
+ create mode 100644 mars.jpg
+</pre>
+<p class="above">Looks like that worked.
+  <br>
+  (It might not have done if the changes
+  you made to the HTML file when you added the <code>&lt;img&gt;</code> tag
+  <em>conflicted</em> with you adding the <code>&lt;title&gt;</code>... but they
+  were in different parts of the file, so Git is cool with that. Which is just
+  as well, as we’re not
+  looking at resolving conflicts here yet).
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+
+<p>Now that’s done, look at the files in your directory:</p>
+<div class="p">&gt; ls</div>
+<div class="r">index.html	mars.jpg</div>
+<p class="above">The Mars photo has reappeared.</p>
+
+<p>Look inside the HTML file:</p>
+<div class="p">&gt; cat index.html </div>
+<pre>
+&lt;html&gt;
+ &lt;head&gt;
+  &lt;title&gt;welcome to the planet&lt;/title&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+  &lt;p&gt;Don't panic.&lt;/p&gt;
+  &lt;img src="mars.jpg" alt="mars"/&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p class="above">Note how changes from both branches are in the same file.</p>
+<p>This is what the history looks like (remember this is using a custom
+  version of <code>git&nbsp;log</code> that pretty-prints a dense version of the log).
+  You can see the <code>1436e62</code> commit on the <code>master</code> branch and
+  the <code>aeec505</code> on the <code>add-an-image</code> branch happened
+  separately, before the branches merged again.
+</p>
+<div class="p">&gt; git lg</div>
+<pre>
+*   <span class="red">63b3f4e</span> - <span class="yellow">(HEAD -&gt; master)</span> Merge branch 'add-an-image' <span class="green"><span class="green">(47 seconds ago)</span></span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+<span class="red">|</span><span class="green">\</span>  
+| * <span class="red">aeec505</span> - <span class="yellow">(add-an-image)</span> add picture of Mars to webpage <span class="green"><span class="green">(3 minutes ago)</span></span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="green">|</span> <span class="red">1436e62</span> - add a title to the webpage <span class="green"><span class="green">(87 seconds ago)</span></span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+|<span class="green">/</span>  
+* <span class="red">2c2ddfc</span> - rename file to be webserver's default (index) <span class="green"><span class="green">(10 minutes ago)</span></span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">07e1c1c</span> - <span class="yellow">(tag: hello-mars)</span> change world because we're not running on Earth <span class="green"><span class="green">(13 minutes ago)</span></span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">1bddec2</span> - first commit <span class="green"><span class="green">(14 minutes ago)</span></span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+</pre>
+
+<p>Next, you’re going to make and commit a change just so you can see how to roll it back...</p>
+<div class="p">&gt; edit index.html </div>
+<div class="p">&gt; git diff</div>
+<pre>
+diff --git a/index.html b/index.html
+index 483ac7c..0f5a8bc 100644
+--- a/index.html
++++ b/index.html
+<span class="cyan">@@ -1,6 +1,6 @@</span>
+ &lt;html&gt;
+  &lt;head&gt;
+<span class="red">-  &lt;title&gt;welcome to the planet&lt;/title&gt;</span>
+<span class="green">+  &lt;title&gt;ZOMG we're on Mars!!!&lt;/title&gt;</span>
+  &lt;/head&gt;
+  &lt;body&gt;
+   &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+</pre>   
+<p class="above">You can see the title has been changed.</p>
+<p>
+  Commit the change.<br>
+  This example shows the commit command being made with an explicit what-file-to-commit
+  (<code>index.html</code>) argument
+  on the end. This is a <em>really bad habit to get into</em> because it
+  bypasses the explict <code>add</code>ing-to-the-stage part (and will ignore any other
+  changes that you might have staged but forgotten about here). Similarly, there’s a
+  <code>git&nbsp;commit&nbsp;-a</code> "commit all the things!" option that,
+  while you’re learning git, you should avoid. It’s good practice to explicity <code>add</code>
+  changes to the stage. But, you know, sometimes whatever’s fastest, right?  
+</p>
+<div class="p">&gt; git commit -m "change title to be more excited" index.html </div>
+<pre>
+[master 5493c6c] change title to be more excited
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+</pre>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+<div class="p">&gt; git lg</div>
+<pre>
+* <span class="red">5493c6c</span> - <span class="yellow">(HEAD -&gt; master)</span> change title to be more excited <span class="green">(35 seconds ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+*   <span class="red">63b3f4e</span> - Merge branch 'add-an-image' <span class="green">(4 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+<span class="green">|</span><span class="yellow">\</span>  
+<span class="green">|</span> * <span class="red">aeec505</span> - <span class="yellow">(add-an-image)</span> add picture of Mars to webpage <span class="green">(7 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="yellow">|</span> <span class="red">1436e62</span> - add a title to the webpage <span class="green">(5 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+|<span class="yellow">/</span>  
+* <span class="red">2c2ddfc</span> - rename file to be webserver's default (index) <span class="green">(14 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">07e1c1c</span> - <span class="yellow">(tag: hello-mars)</span> change world because we're not running on Earth <span class="green">(16 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">1bddec2</span> - first commit <span class="green">(18 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+</pre>
+<p>There are a number of ways to roll back in Git. Here’s one: a <em>soft</em> reset, which
+  means the files in your working tree remain in their current state.
+  <code>HEAD~1</code> is git-speak for "one below the HEAD" (in this case this
+  is commit <code>63b3f4e</code>, the result of the merge you did earlier).
+  You could use the commit hash in the command here instead.
+</p>
+<div class="p">&gt; git reset --soft HEAD~1</div>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+	<span class="green">modified:   index.html</span>
+</pre>
+<p class="above">After the reset, the HEAD is now pointing at commit <code>63b3f4e</code>
+  but, because Git doesn’t change the files in a soft reset, the HTML file still has
+  changes that were added in the commit you’ve just rolled back from.</p>
+
+<div class="p">&gt; git diff</div>
+<pre>
+diff --git a/index.html b/index.html
+index 483ac7c..0f5a8bc 100644
+--- a/index.html
++++ b/index.html
+<span>@@ -1,6 +1,6 @@</span>
+ &lt;html&gt;
+  &lt;head&gt;
+<span class="red">-  &lt;title&gt;welcome to the planet&lt;/title&gt;</span>
+<span class="green">+  &lt;title&gt;ZOMG we're on Mars!!!&lt;/title&gt;</span>
+  &lt;/head&gt;
+  &lt;body&gt;
+   &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+</pre>
+<p class="above">Notice how "ZOMG" is in the file.
+  <br>
+  That’s from the commit we’ve rolled back from... the soft reset meant the
+  history rolled back but left the changes there.
+</p>
+
+<p>Also, look at the history and that commit is no longer shown.
+  <br>(There <em>is</em> a way to get it back, but it’s not on the branch any more).</p>
+<div class="p">&gt; git lg</div>
+<pre>
+*   <span class="red">63b3f4e</span> - <span class="yellow">(HEAD -&gt; master)</span> Merge branch 'add-an-image' <span class="green">(6 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+<span class="red">|</span><span class="green">\</span>  
+<span class="red">|</span> * <span class="red">aeec505</span> - <span class="yellow">(add-an-image)</span> add picture of Mars to webpage <span class="green">(8 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="green">|</span> <span class="red">1436e62</span> - add a title to the webpage <span class="green">(7 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+<span class="green">|/</span>  
+* <span class="red">2c2ddfc</span> - rename file to be webserver's default (index) <span class="green">(16 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">07e1c1c</span> - <span class="yellow">(tag: hello-mars)</span> change world because we're not running on Earth <span class="green">(18 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">1bddec2</span> - first commit <span class="green">(19 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+</pre>
+
+<p><code>git grep</code> is handy: it only searches the files it knows about:</p>
+<div class="p">&gt; git grep ZOMG</div>
+<div class="r">index.html:  &lt;title&gt;<span class="red">ZOMG</span> we're on Mars!!!&lt;/title&gt;</div>
+
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+	<span class="red">modified:   index.html</span>
+
+no changes added to commit (use "git add" and/or "git commit -a")
+</pre>
+
+<p>Remember that checking out a file simply reverts it to its "clean" state
+  (destroying any changes it contains).</p>
+<div class="p">&gt; git checkout index.html </div>
+
+<div class="p">&gt; git grep ZOMG</div>
+<p class="above">So now "ZOMG" can no longer be found...</p>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+<p class="above">...and there are no changes.</p>
+
+<p>Look in the HTML file to remind yourself of its current contents:</p>
+<div class="p">&gt; cat index.html </div>
+<pre>
+&lt;html&gt;
+ &lt;head&gt;
+  &lt;title&gt;welcome to the planet&lt;/title&gt;
+ &lt;/head&gt;
+ &lt;body&gt;
+  &lt;h1&gt;Hello Mars!&lt;/h1&gt;
+  &lt;p&gt;Don't panic.&lt;/p&gt;
+  &lt;img src="mars.jpg" alt="mars"/&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+
+<p>You can use <code>git cherry-pick</code> to apply one specific commit
+  to the repo. To demonstrate this, you’re going to insert that ZOMG
+  back into the HTML. Note that the commit doesn’t have to be on this branch
+  (in fact, currently it’s not in <em>any</em> branch). In this case, you’re
+  using the SHA-1 hash for the commit, which you can find from looking at the
+  history above.
+</p>
+<div class="p">&gt; git cherry-pick 5493c6c</div>
+<pre>
+[master ecd4154] change title to be more excited
+ Date: Wed Jan 23 14:32:57 2019 +0000
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+</pre>
+<div class="p">&gt; git status</div>
+<pre>
+On branch master
+nothing to commit, working tree clean
+</pre>
+<div class="p">&gt; git grep ZOMG</div>
+<div class="r">index.html:  &lt;title&gt;<span class="red">ZOMG</span> we're on Mars!!!&lt;/title&gt;</div>
+<p class="above">The ZOMG is back in.</p>
+
+<p>Look at the history, and you can see that commit is back at the top of the branch
+  (and HEAD has moved to point there too, as you’d expect).
+</p>  
+<div class="p">&gt; git lg</div>
+<pre>
+* <span class="red">ecd4154</span> - <span class="yellow">(HEAD -&gt; master)</span> change title to be more excited <span class="green">(19 seconds ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+*   <span class="red">63b3f4e</span> - Merge branch 'add-an-image' <span class="green">(12 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+<span class="green">|</span><span class="yellow">\</span>  
+<span class="green">|</span> * <span class="red">aeec505</span> - <span class="yellow">(add-an-image)</span> add picture of Mars to webpage <span class="green">(14 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="yellow">|</span> <span class="red">1436e62</span> - add a title to the webpage <span class="green">(13 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+<span class="yellow">|/ </span> 
+* <span class="red">2c2ddfc</span> - rename file to be webserver's default (index) <span class="green">(21 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">07e1c1c</span> - <span class="yellow">(tag: hello-mars)</span> change world because we're not running on Earth <span class="green">(24 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+* <span class="red">1bddec2</span> - first commit <span class="green">(25 minutes ago)</span> <span class="dark-blue">&lt;Anne Example&gt</span>;
+</pre>
+
+<p>Finally, you can push this repo up to GitHub (it could be any git-aware server.
+  Note that for this to work, you need to have created an empty repo on
+  <a href="https://github.com">github.com</a> for your username, and also set
+  up the credentials needed for authentication. The point is: this is showing
+  Git’s capability to push and pull from a remote repository.
+</p>
+<p>You need to tell Git that there’s a remote repo called <code>origin</code>, and
+  where to find it:
+</p>
+<div class="p">&lt; git remote add origin git@github.com:anneexample/annotated-git-session.git</div>
+<p>You can check that’s worked by asking Git to show you the remotes it knows about:</p>
+<div class="p">&lt; git remote -v</div>
+<pre>
+origin	git@github.com:anneexample/annotated-git-session.git (fetch)
+origin	git@github.com:anneexample/annotated-git-session.git (push)
+</pre>
+<p class="above">Git is ready to push and pull from the repo on GitHub.</p>
+
+<p>OK so push your repo up to GitHub.
+  <br>
+  The <code>-u</code> (set-upstream) option is needed the first time you do
+  this to set up the relationship between your local branch and the remote
+  one).
+<div class="p">&lt; git push -u origin master</div>
+<pre>
+Counting objects: 21, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (17/17), done.
+Writing objects: 100% (21/21), 47.81 KiB | 7.97 MiB/s, done.
+Total 21 (delta 5), reused 0 (delta 0)
+remote: Resolving deltas: 100% (5/5), done.
+To github.com:anneexample/annotated-git-session.git
+ * [new branch]      master -> master
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+</pre>
+<p class="above">That tells you that your files went up there, and also
+  that now your <code>master</code> branch is tracking the remote one.
+</p>
+<div class="p">&lt; git status</div>
+<pre>
+On branch master
+Your branch is up to date with 'origin/master'.
+
+nothing to commit, working tree clean
+</pre>
+<p class="above">
+  Note how now Git tells you is your branch is up-to-date with <code>origin/master</code>.
+  <br>
+  Obviously that’s the case now, but as you work on your branch, it will show
+  how many commits ahead (or sometimes behind) the remote you are.
+</p>
+
+<p>Other people might contribute to the upstream repo you’ve called <code>origin</code>.
+  You get those changes by doing <code>git fetch</code>.
+</p>
+<div class="p">&lt; git fetch origin</div>
+<p>If you look at the branches, you’ll see a branch called
+  <code>remotes/origin/master</code> — this is your local copy of what you’ve
+  just fetched from the remote repo.
+<div class="p">&lt; git branch -a</div>
+<pre>
+  add-an-image
+* <span class="green">master</span>
+  <span class="red">remotes/origin/master</span>
+</pre>
+<p class="above">
+  If there are changes in <code>remotes/origin/master</code>, you can
+  merge them using <code>git&nbsp;merge</code> just like any other branch.
+  <br>
+  Note you can also use <code>git&nbsp;pull</code>: this executes a
+  <code>git&nbsp;fetch</code> immediately followed by a <code>git&nbsp;merge</code>.
+  It’s generally considered prudent not to merge changes unless you’re sure
+  they are appropriate, so there’s a case for avoiding <code>pull</code> in
+  favour of manually <code>fetch</code>ing and <code>merge</code>-ing.
+</p>
+
+
+<div>&nbsp;</div>
+<!-- end of session -->
+</div>
+<div class="footer">
+  —end—
+</div>
+</body>
+</html>
