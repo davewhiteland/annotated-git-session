@@ -1036,9 +1036,9 @@ nothing to commit, working tree clean
 <p>You need to tell Git that there’s a remote repo called <code>origin</code>, and
   where to find it:
 </p>
-<div class="p">&lt; git remote add origin git@github.com:anneexample/annotated-git-session.git</div>
+<div class="p">&gt; git remote add origin git@github.com:anneexample/annotated-git-session.git</div>
 <p>You can check that’s worked by asking Git to show you the remotes it knows about:</p>
-<div class="p">&lt; git remote -v</div>
+<div class="p">&gt; git remote -v</div>
 <pre>
 origin	git@github.com:anneexample/annotated-git-session.git (fetch)
 origin	git@github.com:anneexample/annotated-git-session.git (push)
@@ -1050,7 +1050,7 @@ origin	git@github.com:anneexample/annotated-git-session.git (push)
   The <code>-u</code> (set-upstream) option is needed the first time you do
   this to set up the relationship between your local branch and the remote
   one).
-<div class="p">&lt; git push -u origin master</div>
+<div class="p">&gt; git push -u origin master</div>
 <pre>
 Counting objects: 21, done.
 Delta compression using up to 4 threads.
@@ -1065,7 +1065,7 @@ Branch 'master' set up to track remote branch 'master' from 'origin'.
 <p class="above">That tells you that your files went up there, and also
   that now your <code>master</code> branch is tracking the remote one.
 </p>
-<div class="p">&lt; git status</div>
+<div class="p">&gt; git status</div>
 <pre>
 On branch master
 Your branch is up to date with 'origin/master'.
@@ -1082,11 +1082,11 @@ nothing to commit, working tree clean
 <p>Other people might contribute to the upstream repo you’ve called <code>origin</code>.
   You get those changes by doing <code>git fetch</code>.
 </p>
-<div class="p">&lt; git fetch origin</div>
+<div class="p">&gt; git fetch origin</div>
 <p>If you look at the branches, you’ll see a branch called
   <code>remotes/origin/master</code> — this is your local copy of what you’ve
   just fetched from the remote repo.
-<div class="p">&lt; git branch -a</div>
+<div class="p">&gt; git branch -a</div>
 <pre>
   add-an-image
 * <span class="green">master</span>
